@@ -18,20 +18,19 @@ jobs:
           mingw-w64-ucrt-x86_64-gcc
           mingw-w64-ucrt-x86_64-make
 
-    - name: Build for Core 2 Quad Q9400 (Old PC)
+    - name: Build and Upload Engines
       shell: msys2 {0}
       run: |
         cd source
-        mingw32-make profile-build ARCH=x86-64
-        mv Triumviratus.exe Triumviratus-Core2Quad-Q9400.exe
-        mingw32-make clean
         
-    - name: Build for Core i5-3570S (AVX)
-      shell: msys2 {0}
-      run: |
-        cd source
-        mingw32-make profile-build ARCH=x86-64-modern
-        mv Triumviratus.exe Triumviratus-i5-3570S.exe
+        # 1. Сборка для Core 2 Quad Q9400
+        make profile-build ARCH=x86-64
+        cp Triumviratus.exe Triumviratus-Core2Quad-Q9400.exe
+        make clean
+        
+        # 2. Сборка для Core i5-3570S
+        make profile-build ARCH=x86-64-modern
+        cp Triumviratus.exe Triumviratus-i5-3570S.exe
 
     - name: Upload Core 2 Quad Version
       uses: actions/upload-artifact@v4
