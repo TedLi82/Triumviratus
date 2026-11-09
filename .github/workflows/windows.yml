@@ -5,31 +5,26 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up MSYS2 (Compiler Environment)
-      uses: msys2/setup-msys2@v2
-      with:
-        msystem: UCRT64
-        update: false
-        install: >-
-          mingw-w64-ucrt-x86_64-gcc
-          mingw-w64-ucrt-x86_64-make
+    - name: Install Mingw-w64 Compiler
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y mingw-w64
 
-    - name: Build and Upload Engines
-      shell: msys2 {0}
+    - name: Build Engines for Windows
       run: |
         cd source
         
-        # 1. Сборка для Core 2 Quad Q9400
-        make profile-build ARCH=x86-64
+        # 1. Сборка для Core 2 Quad Q9400 (без POPCNT)
+        make profile-build ARCH=x86-64 COMP=mingw
         cp Triumviratus.exe Triumviratus-Core2Quad-Q9400.exe
         make clean
         
-        # 2. Сборка для Core i5-3570S
-        make profile-build ARCH=x86-64-modern
+        # 2. Сборка для Core i5-3570S (с POPCNT и SSE4)
+        make profile-build ARCH=x86-64-modern COMP=mingw
         cp Triumviratus.exe Triumviratus-i5-3570S.exe
 
     - name: Upload Core 2 Quad Version
