@@ -1,0 +1,35 @@
+name: Windows Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Build for Core 2 Quad Q9400 (Old PC)
+      run: |
+        cd source
+        mingw32-make profile-build ARCH=x86-64
+        rename Triumviratus.exe Triumviratus-Core2Quad-Q9400.exe
+        mingw32-make clean
+        
+    - name: Build for Core i5-3570S (AVX)
+      run: |
+        cd source
+        mingw32-make profile-build ARCH=x86-64-modern
+        rename Triumviratus.exe Triumviratus-i5-3570S.exe
+
+    - name: Upload Core 2 Quad Version
+      uses: actions/upload-artifact@v4
+      with:
+        name: Triumviratus-Core2Quad-Q9400
+        path: source/Triumviratus-Core2Quad-Q9400.exe
+
+    - name: Upload i5 Version
+      uses: actions/upload-artifact@v4
+      with:
+        name: Triumviratus-i5-3570S
+        path: source/Triumviratus-i5-3570S.exe
